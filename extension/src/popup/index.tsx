@@ -79,7 +79,7 @@ const Popup: React.FC = () => {
             {status && <p className="status-message">{status}</p>}
           </>
         ) : (
-          <p className="warning">Please navigate to a Perplexity thread to use this extension.</p>
+          <p className="warning">Please go to a Perplexity thread to use this extension.</p>
         )}
       </main>
       

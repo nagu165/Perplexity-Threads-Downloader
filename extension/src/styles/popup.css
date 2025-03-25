@@ -45,7 +45,7 @@ body {
   color: #28a745;
 }
 
-.popup-container main .status-message.error {
+.popup-container main .status-message.err {
   color: #dc3545;
 }
 
@@ -74,6 +74,6 @@ body {
 }
 
 .download-btn:disabled {
-  background-color: #9a76d8; /* Lightened version of #6f42c1 */
+  background-color: #9a76d8;
   cursor: not-allowed;
 }

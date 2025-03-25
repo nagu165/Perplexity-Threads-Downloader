@@ -1,27 +1,26 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Perplexity Threads Downloader installed');
+  console.log('Thanks for installing perplexity threads downloader');
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'downloadMarkdown') {
-    console.log('Received markdown content for download');
-    
-    const dataUrl = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(message.markdown);
+    const cleanMarkdown = removeDuplicateLines(message.markdown);
+
+    const dataUrl = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(cleanMarkdown);
     
     chrome.downloads.download({
       url: dataUrl,
-      filename: message.filename || `perplexity-thread-${new Date().toISOString().slice(0, 10)}.md`,
+      filename: message.filename,
       saveAs: true
     }, (downloadId) => {
       if (chrome.runtime.lastError) {
-        console.error('Download error:', chrome.runtime.lastError);
-        sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        console.error('Download err:', chrome.runtime.lastError);
+        sendResponse({ success: false, err: chrome.runtime.lastError.message });
       } else {
-        console.log('Download started with ID:', downloadId);
         sendResponse({ success: true, downloadId });
       }
     });
-
+    
     return true;
   }
 });
@@ -34,3 +33,19 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
   }
 });
+
+function removeDuplicateLines(markdown: string): string {
+  let lines = markdown.split('\n');
+  let unique = [];
+  let seen = new Set();
+
+  for (let line of lines) {
+    let cleanLine = line.trim().replace(/^\*.*?\*:\s*/, '');
+    if (cleanLine && !seen.has(cleanLine)) {
+      unique.push(line);
+      seen.add(cleanLine);
+    }
+  }
+
+  return unique.join('\n');
+}
